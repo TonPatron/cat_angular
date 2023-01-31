@@ -1,0 +1,65 @@
+<form [formGroup]="chatForm" (ngSubmit)="onSubmit()">
+  <h3>MON CHAT.FR</h3>
+
+  <!-- nous allons faire un formulaire qui nous permet d'ajouter plusieurs chats
+  ainsi que plusieurs valeurs en meme temps (le nom, la couleur, l'age) pour ce même chat 
+  nous pouvons à la volée ajouter plusieurs chats (en cliquant sur "ajouter un chat")
+et nous pouvons enregistrer ces chats (en cliquant sur "inscription")  -->
+
+  <!-- le formulaire se lie a ce que cats.component.ts à créer via le nom : 
+formArrayName="cats" -->
+  <!-- nous bouclons via *ngFor sur le nombre de formulaire existant 
+exemple : 1 chat 1 formulaire, 2 chat donc 2 formulaire (1 pour chaque chat) -->
+  <div formArrayName="cats" [ngStyle]="myStyles">
+    <div *ngFor="let cat of cats.controls; let i = index">
+      <!-- ici nous devons absolument préciser ceci 
+      formGroupName=i
+      pourquoi? pour faire matcher que ce formulaire correspond bien au chat actuel
+      exemple : le premier chat sera l'index 0 , donc il lui faut faire matcher avec le formulaire 0  -->
+      <!-- exemple de code :  -->
+      <!-- <div [formGroupName]="i"></div> -->
+      <div [formGroupName]="i">
+        <label>
+          Le chat
+          <!-- ici nous donnons le nom du champ pour faire une adéquation (un match) avec le champ du meme nom que nous avons créer en ts, en clair
+            si nous avons UN (1) chat, alors ce champ name correspond au champ name de notre formulaire (0 (0 car index = 0 par défaut)) -->
+          <input type="text" formControlName="name" />
+        </label>
+        <label>
+          Sa couleur
+          <input type="text" formControlName="color" />
+        </label>
+        <label>
+          Son âge
+          <input type="number" formControlName="age" />
+        </label>
+      </div>
+    </div>
+
+    <!-- le bouton qui va lancer la fonction ajouter un chat pour créer ajouter un nouveau chat et son formulaire (en groupe) pour celui qu'on viens de créer via la fonction addNewCat -->
+    <button type="button" (click)="addNewCat()">Ajouter un chat</button>
+  </div>
+
+  <!-- le button submit qui va lancer notre fonction onSubmit pour injecter notre chat dans le tableau que nous avons créer coté cats.component.ts -->
+  <button type="submit">Inscrit ton chat</button>
+</form>
+
+<!-- ici nous allons afficher les chats que nous venons d'inscrire -->
+<h1>Ma liste de chat que je viens d'inscrire</h1>
+<!-- j'ai mis ceci en plus, si le tableau des chats à une longueur inférieur ou = à 0 ça veut dire qu'en clair il n'y a pas encore de chat inscrit, donc nous faisons voir ce message pour indiqué que vous n'avez pas encore créer de chats , ce message va forcement disparaitre une fois que vous aurez créer un chat car catList sera remplis d'au moins une longueur (ou plus) -->
+<div *ngIf="catList.length <= 0">Vous n'avez pas encore ajouté de chat</div>
+
+<!-- notre boucle pour afficher les chats un par un qui viennent de notre catlist -->
+<div *ngFor="let cat of catList; let i = index">
+  <!-- le nom du chat -->
+  <p>{{ cat.name }}</p>
+  <!-- l'age du chat -->
+  <p>{{ cat.age }}</p>
+  <!-- la couleur du chat -->
+  <p>{{ cat.color }}</p>
+  <!-- grace au two ways binding, nous plaçons le nom du chat
+  dans cet input ce qui permet de modifier son nom à la volée -->
+  <input [(ngModel)]="cat.name" />
+  <!-- notre button pour faire miauler le chat, quand nous l'apellons nous allons lancer la fonction catAction en lui faisant passer le nom du chat -->
+  <button (click)="catAction(cat.name)">Faire miauler</button>
+</div>
